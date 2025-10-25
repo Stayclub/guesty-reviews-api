@@ -4,12 +4,17 @@ import { Card } from "@/components/ui/card";
 interface ReviewCardProps {
   review: {
     _id: string;
-    guestName: string;
-    rating: number;
+    guestName?: string;
+    rating?: number;
     publicReview?: string;
     createdAt: string;
     listing?: {
       nickname?: string;
+    };
+    rawReview?: {
+      overall_rating: number;
+      public_review?: string;
+      reviewer_id?: string;
     };
   };
 }
@@ -36,26 +41,30 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
     ));
   };
 
+  const guestName = review.guestName || `Guest ${review.rawReview?.reviewer_id?.slice(-6) || 'Unknown'}`;
+  const rating = review.rawReview?.overall_rating || review.rating || 0;
+  const publicReview = review.rawReview?.public_review || review.publicReview;
+
   return (
     <Card className="p-6 bg-gradient-to-b from-card to-card/95 border-border/50 hover:shadow-[var(--shadow-hover)] transition-[box-shadow,transform] duration-300 hover:-translate-y-1">
       <div className="space-y-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <h3 className="font-semibold text-lg text-foreground mb-1">
-              {review.guestName}
+              {guestName}
             </h3>
             <p className="text-sm text-muted-foreground">
               {formatDate(review.createdAt)}
             </p>
           </div>
           <div className="flex gap-0.5">
-            {renderStars(review.rating)}
+            {renderStars(rating)}
           </div>
         </div>
 
-        {review.publicReview && (
+        {publicReview && (
           <p className="text-foreground/90 leading-relaxed">
-            {review.publicReview}
+            {publicReview}
           </p>
         )}
 

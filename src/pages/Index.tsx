@@ -36,7 +36,7 @@ const Index = () => {
   const reviews = data?.results || [];
   const totalReviews = reviews.length;
   const averageRating = totalReviews > 0
-    ? reviews.reduce((acc: number, review: any) => acc + review.rating, 0) / totalReviews
+    ? reviews.reduce((acc: number, review: any) => acc + (review.rawReview?.overall_rating || review.rating || 0), 0) / totalReviews
     : 0;
 
   return (

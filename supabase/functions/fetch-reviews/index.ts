@@ -41,10 +41,11 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log(`Successfully fetched ${data.results?.length || 0} reviews`);
+    const reviews = data.data || data.results || [];
+    console.log(`Successfully fetched ${reviews.length} reviews`);
 
     return new Response(
-      JSON.stringify(data),
+      JSON.stringify({ results: reviews }),
       {
         headers: {
           ...corsHeaders,
