@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ReviewCard } from "@/components/ReviewCard";
@@ -8,6 +9,7 @@ import { PropertyNav } from "@/components/PropertyNav";
 
 const TheGrande = () => {
   const { toast } = useToast();
+  const [filter, setFilter] = useState<"all" | "airbnb">("all");
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["reviews", "the-grande"],
@@ -34,10 +36,18 @@ const TheGrande = () => {
     });
   }
 
-  const reviews = data?.results || [];
-  const totalReviews = reviews.length;
-  const averageRating = totalReviews > 0
-    ? reviews.reduce((acc: number, review: any) => acc + (review.rawReview?.overall_rating || review.rating || 0), 0) / totalReviews
+  const allReviews = data?.results || [];
+  
+  const filteredReviews = filter === "airbnb" 
+    ? allReviews.filter((review: any) => {
+        const channelId = review.channelId?.toLowerCase();
+        return channelId === "airbnb" || channelId === "airbnb2";
+      })
+    : allReviews;
+  
+  const totalReviews = filteredReviews.length;
+  const averageRating = filteredReviews.length > 0
+    ? filteredReviews.reduce((acc: number, review: any) => acc + (review.rawReview?.overall_rating || review.rating || 0), 0) / filteredReviews.length
     : 0;
 
   return (
@@ -56,7 +66,11 @@ const TheGrande = () => {
       </div>
 
       {/* Navigation */}
-      <PropertyNav currentProperty="the-grande" />
+      <PropertyNav 
+        currentProperty="the-grande" 
+        onFilterChange={setFilter}
+        currentFilter={filter}
+      />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-12">
@@ -65,12 +79,12 @@ const TheGrande = () => {
             <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
             <p className="text-muted-foreground">Loading reviews...</p>
           </div>
-        ) : reviews.length > 0 ? (
+        ) : filteredReviews.length > 0 ? (
           <>
             <ReviewStats totalReviews={totalReviews} averageRating={averageRating} />
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {reviews.map((review: any) => (
+              {filteredReviews.map((review: any) => (
                 <ReviewCard key={review._id} review={review} />
               ))}
             </div>
