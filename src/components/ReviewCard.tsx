@@ -1,5 +1,6 @@
-import { Star } from "lucide-react";
+import { Star, Building2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface ReviewCardProps {
   review: {
@@ -8,6 +9,7 @@ interface ReviewCardProps {
     rating?: number;
     publicReview?: string;
     createdAt: string;
+    channelId?: string;
     listing?: {
       nickname?: string;
     };
@@ -41,18 +43,42 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
     ));
   };
 
+  const getChannelName = (channelId: string | undefined) => {
+    if (!channelId) return null;
+    
+    const channelMap: Record<string, string> = {
+      'airbnb2': 'Airbnb',
+      'airbnb': 'Airbnb',
+      'bookingcom': 'Booking.com',
+      'booking': 'Booking.com',
+      'vrbo': 'VRBO',
+      'expedia': 'Expedia',
+    };
+    
+    return channelMap[channelId.toLowerCase()] || channelId;
+  };
+
   const guestName = review.guestName || `Guest ${review.rawReview?.reviewer_id?.slice(-6) || 'Unknown'}`;
   const rating = review.rawReview?.overall_rating || review.rating || 0;
   const publicReview = review.rawReview?.public_review || review.publicReview;
+  const channelName = getChannelName(review.channelId);
 
   return (
     <Card className="p-6 bg-gradient-to-b from-card to-card/95 border-border/50 hover:shadow-[var(--shadow-hover)] transition-[box-shadow,transform] duration-300 hover:-translate-y-1">
       <div className="space-y-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <h3 className="font-semibold text-lg text-foreground mb-1">
-              {guestName}
-            </h3>
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-semibold text-lg text-foreground">
+                {guestName}
+              </h3>
+              {channelName && (
+                <Badge variant="secondary" className="text-xs">
+                  <Building2 className="h-3 w-3 mr-1" />
+                  {channelName}
+                </Badge>
+              )}
+            </div>
             <p className="text-sm text-muted-foreground">
               {formatDate(review.createdAt)}
             </p>
