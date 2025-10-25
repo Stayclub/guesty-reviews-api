@@ -18,8 +18,10 @@ serve(async (req) => {
       throw new Error('GUESTY_API_TOKEN not configured');
     }
 
+    // Get listingId from request body or URL params
+    const body = await req.json().catch(() => ({}));
     const url = new URL(req.url);
-    const listingId = url.searchParams.get('listingId') || '677de2c078943a000f408dca';
+    const listingId = body.listingId || url.searchParams.get('listingId') || '677de2c078943a000f408dca';
 
     console.log(`Fetching reviews for listing: ${listingId}`);
 

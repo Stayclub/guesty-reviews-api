@@ -6,14 +6,14 @@ import { Loader2, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { PropertyNav } from "@/components/PropertyNav";
 
-const Index = () => {
+const AmphoraPalms = () => {
   const { toast } = useToast();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["reviews", "the-drift"],
+    queryKey: ["reviews", "amphora-palms"],
     queryFn: async () => {
       const { data, error } = await supabase.functions.invoke("fetch-reviews", {
-        body: { listingId: "677de2c078943a000f408dca" },
+        body: { listingId: "6704b3a054bcb2001183470d" },
       });
 
       if (error) {
@@ -48,7 +48,7 @@ const Index = () => {
           <div className="inline-flex items-center justify-center p-3 bg-white/20 rounded-2xl mb-6 backdrop-blur-sm">
             <Star className="h-8 w-8 fill-primary-foreground" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">The Drift</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Amphora Palms</h1>
           <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto">
             Guest Reviews - See what our guests are saying about their experience
           </p>
@@ -56,7 +56,7 @@ const Index = () => {
       </div>
 
       {/* Navigation */}
-      <PropertyNav currentProperty="the-drift" />
+      <PropertyNav currentProperty="amphora-palms" />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-12">
@@ -89,4 +89,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default AmphoraPalms;
