@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ReviewCard } from "@/components/ReviewCard";
@@ -28,13 +28,15 @@ const Index = () => {
     retry: 1,
   });
 
-  if (error) {
-    toast({
-      title: "Error loading reviews",
-      description: "Failed to fetch reviews from the server. Please try again later.",
-      variant: "destructive",
-    });
-  }
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Error loading reviews",
+        description: "Failed to fetch reviews from the server. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  }, [error, toast]);
 
   const allReviews = data?.results || [];
   
